@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude a fondo · Escala con IA · Lilo Domit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#5B4FE8;
+    --purple-deep:#413AAE;
+    --purple-soft:#EFEDFC;
+    --purple-soft-2:#F7F6FE;
+    --ink:#15142B;
+    --ink-soft:#4A4964;
+    --gray:#767592;
+    --line:#E6E4F2;
+    --bg:#FFFFFF;
+    --bg-alt:#FBFAFF;
+    --code-bg:#15142B;
+    --code-fg:#E9E8F7;
+    --free:#1C8A5C;
+    --free-bg:#E7F6EE;
+    --paid:#B9781F;
+    --paid-bg:#FBF0DD;
+    --amber:#D97B2E;
+    --radius:14px;
+    --maxw:840px;
+  }
+  [data-theme="dark"]{
+    --ink:#F3F2FF;
+    --ink-soft:#C9C7E6;
+    --gray:#9C9AC0;
+    --line:#2C2A4D;
+    --bg:#100F22;
+    --bg-alt:#17162F;
+    --purple-soft:#241F52;
+    --purple-soft-2:#1B1938;
+    --code-bg:#0B0A1C;
+    --free-bg:#123726;
+    --paid-bg:#3A2C10;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    transition:background .25s ease,color .25s ease;
+  }
+  h1,h2,h3,.display{font-family:'Sora',sans-serif;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  .topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);}
+  .topbar-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .brand{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--ink);white-space:nowrap;}
+  .brand span{color:var(--purple);}
+  .theme-toggle{border:1px solid var(--line);background:var(--bg-alt);color:var(--ink-soft);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+
+  .hero{padding:64px 0 40px;}
+  .kicker{color:var(--purple);font-weight:600;font-size:14px;margin:0 0 10px;}
+  .hero h1{font-size:36px;line-height:1.15;font-weight:800;margin:0 0 18px;letter-spacing:-.01em;}
+  .hero p.lede{font-size:17px;color:var(--ink-soft);max-width:640px;margin:0;}
+  .badge-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:999px;padding:6px 13px;}
+  .badge.free{color:var(--free);background:var(--free-bg);}
+  .badge.paid{color:var(--paid);background:var(--paid-bg);}
+
+  section{padding:52px 0;border-top:1px solid var(--line);}
+  .eyebrow{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;}
+  .eyebrow .num{font-family:'Sora',sans-serif;font-weight:800;color:var(--purple);font-size:14px;}
+  .eyebrow h2{font-size:24px;font-weight:700;margin:0;}
+  .icon-eyebrow{font-size:22px;line-height:1;}
+  p{color:var(--ink-soft);}
+  .lead-block{max-width:640px;margin-bottom:26px;}
+  .sub-h{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin:38px 0 6px;}
+  .sub-p{margin-top:0;font-size:15px;}
+  a.lnk{color:var(--purple);font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+
+  /* timeline pequeño */
+  .timeline{display:flex;flex-direction:column;gap:0;margin:22px 0 30px;border-left:2px solid var(--line);padding-left:22px;}
+  .tl-item{position:relative;padding-bottom:22px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:"";position:absolute;left:-27.5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--purple);}
+  .tl-year{font-family:'Sora',sans-serif;font-weight:700;font-size:13px;color:var(--purple);margin-bottom:2px;}
+  .tl-text{font-size:14.5px;color:var(--ink-soft);margin:0;}
+  .timeline.compact{margin:14px 0 0;}
+  .timeline.compact .tl-item{padding-bottom:14px;}
+
+  /* growth chart */
+  .chart-card{background:var(--bg-alt);border:1px solid var(--line);border-radius:var(--radius);padding:26px 26px 18px;margin:20px 0 8px;}
+  .chart-title{font-size:13px;font-weight:700;color:var(--ink-soft);margin:0 0 4px;}
+  .chart-sub{font-size:12.5px;color:var(--gray);margin:0 0 14px;}
+  .legend{display:flex;gap:18px;margin-top:10px;font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .chart-foot{font-size:11.5px;color:var(--gray);margin-top:10px;}
+
+  /* feature list en vez de tabla */
+  .feature-list{list-style:none;margin:0;padding:0;}
+  .feature-list li{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);}
+  .feature-list li:last-child{border-bottom:none;}
+  .feature-list .ficon{flex:none;width:34px;height:34px;border-radius:9px;background:var(--purple-soft);display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .feature-list h4{margin:0 0 4px;font-size:15px;color:var(--ink);}
+  .feature-list p{margin:0;font-size:14px;color:var(--gray);}
+
+  .table-scroll{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;margin-top:8px;}
+  thead th{text-align:left;font-size:12px;font-weight:700;color:var(--gray);letter-spacing:.04em;text-transform:uppercase;padding:12px 16px;background:var(--purple-soft-2);}
+  thead th:first-child{border-radius:10px 0 0 10px;}
+  thead th:last-child{border-radius:0 10px 10px 0;}
+  tbody td{padding:16px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px;color:var(--ink-soft);}
+  tbody tr:last-child td{border-bottom:none;}
+  td.tool{color:var(--purple);font-weight:700;white-space:nowrap;}
+
+  .module{background:var(--bg-alt);border:1px solid var(--line);border-radius:var(--radius);padding:30px 30px 26px;margin-top:26px;}
+  .module-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+  .module-head h3{font-size:19px;margin:0;font-weight:700;}
+  .module-goal{font-size:14px;color:var(--gray);margin:10px 0 20px;}
+  .module-goal b{color:var(--ink-soft);}
+
+  .flow{margin:18px 0 4px;padding:0;list-style:none;}
+  .flow li{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px;color:var(--ink-soft);}
+  .flow li:last-child{border-bottom:none;}
+  .flow .arrow{color:var(--purple);font-weight:700;flex:none;}
+
+  .prompt{position:relative;background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:18px 88px 18px 18px;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;margin:14px 0;white-space:pre-wrap;}
+  .prompt .copy{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.08);color:var(--code-fg);border:1px solid rgba(255,255,255,.16);border-radius:7px;font-size:11.5px;padding:5px 10px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .prompt .copy:hover{background:rgba(255,255,255,.16);}
+  .prompt-label{font-size:12px;color:var(--gray);font-weight:600;margin:18px 0 -4px;}
+
+  .note{border-left:3px solid var(--purple);background:var(--purple-soft-2);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink-soft);margin-top:16px;}
+  .note.amber{border-left-color:var(--amber);}
+
+  .connector-directory{margin-top:20px;}
+  .cd-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+  .cd-head h5{margin:0;font-size:15px;font-weight:700;color:var(--ink);}
+  .cd-head a{font-size:13px;color:var(--purple);text-decoration:none;font-weight:600;}
+  .cd-head a:hover{text-decoration:underline;}
+  .cd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:640px){.cd-grid{grid-template-columns:1fr;}}
+  .cd-card{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:14px 16px;}
+  .cd-card h6{margin:0 0 3px;font-size:14px;font-weight:700;color:var(--ink);}
+  .cd-card p{margin:0;font-size:12.5px;color:var(--gray);}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media (max-width:640px){.two-col{grid-template-columns:1fr;} .chart-card svg{width:100%;height:auto;}}
+
+  /* tarjetas simples */
+  .card{border:1px solid var(--line);background:var(--bg-alt);border-radius:var(--radius);padding:20px 22px 14px;}
+  .card .card-tag{font-family:'Sora',sans-serif;font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--purple);margin:0 0 6px;}
+  .card h4{font-family:'Sora',sans-serif;font-size:16px;margin:0 0 6px;color:var(--ink);}
+  .card p{font-size:14px;margin:0 0 8px;}
+  .card .flow{margin-top:6px;}
+  .card.paid-card .card-tag{color:var(--paid);}
+
+  /* esquema de la pantalla */
+  .ui-mock{display:grid;grid-template-columns:30% 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);margin-top:16px;min-height:270px;}
+  .ui-side{background:var(--bg-alt);border-right:1px solid var(--line);padding:14px 12px;display:flex;flex-direction:column;gap:10px;}
+  .ui-main{padding:16px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;}
+  .ui-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);min-width:0;}
+  .ui-item .ui-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ui-btn{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px;font-weight:600;color:var(--ink);}
+  .ui-line{height:8px;border-radius:4px;background:var(--line);flex:1;}
+  .ui-spacer{flex:1;}
+  .ui-hello{font-family:'Sora',sans-serif;font-weight:700;font-size:16px;color:var(--ink);text-align:center;margin:auto 0;}
+  .ui-box{border:1px solid var(--line);border-radius:12px;background:var(--bg-alt);padding:12px;}
+  .ui-placeholder{font-size:13px;color:var(--gray);display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .ui-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .ui-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600;color:var(--ink);}
+  .n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--purple);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;}
+
+  /* niveles */
+  .level{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:18px 20px 12px;margin-top:16px;}
+  .level-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .level-tag{flex:none;font-family:'Sora',sans-serif;font-weight:700;font-size:12px;color:#fff;background:var(--purple);border-radius:999px;padding:4px 12px;}
+  .level-tag.l2{background:var(--purple-deep);}
+  .level-tag.l3{background:var(--amber);}
+  .level-tag.all{background:var(--free);}
+  .level-head h4{margin:0;font-size:15.5px;color:var(--ink);}
+  .level-desc{font-size:14px;margin:8px 0 0;}
+  .level .prompt:last-child{margin-bottom:8px;}
+
+  details.help{border:1px dashed var(--line);border-radius:12px;padding:14px 18px;margin-top:16px;background:var(--bg);}
+  details.help summary{cursor:pointer;font-weight:600;font-size:14.5px;color:var(--ink);}
+  details.help[open] summary{margin-bottom:4px;}
+
+  footer{padding:44px 0 70px;color:var(--gray);font-size:13px;}
+
+  @media (max-width:640px){
+    .wrap{padding:0 16px;}
+    .topbar-inner{padding:12px 16px;}
+    .brand{font-size:13px;}
+    .brand span{display:none;}
+    .hero{padding:44px 0 32px;}
+    .hero h1{font-size:29px;}
+    .module{padding:22px 18px 20px;}
+    .level{padding:16px 14px 10px;}
+    .prompt{padding:46px 16px 16px 16px;font-size:13px;}
+    td.tool{white-space:normal;}
+    tbody td{padding:12px 10px;font-size:14px;}
+    thead th{padding:10px;}
+    .ui-mock{grid-template-columns:36% 1fr;}
+    .ui-side{padding:12px 8px;}
+    .ui-main{padding:12px 10px;}
+    .ui-item{font-size:11.5px;gap:6px;}
+    .ui-btn{padding:6px 7px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">Escala con IA <span>· Claude a fondo</span></div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Oscuro</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <p class="kicker">Lilo Domit</p>
+    <h1>Claude a fondo: la herramienta que maximiza tu trabajo</h1>
+    <p class="lede">Ya viste cómo estructurar prompts. Hoy vemos de dónde viene Claude y por qué creció tanto (no es por el chat), y después lo abrimos desde cero para hacer tres ejercicios con tu propia información.</p>
+    <div class="badge-row">
+      <span class="badge free">🆓 todo se puede hacer con cuenta gratis</span>
+      <span class="badge paid">⭐ 3 niveles por ejercicio: avanza a tu ritmo</span>
+    </div>
+
+    <div class="note" style="margin-top:28px;"><b style="color:var(--ink);">¿Todavía no tienes cuenta?</b> Ve creando la tuya en <a class="lnk" href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> mientras vemos el contexto. Los pasos están en la <a class="lnk" href="#basico">sección 04</a>.</div>
+
+    <p class="sub-h" style="margin-top:34px;">Cómo se van los 90 minutos</p>
+    <div class="timeline compact">
+      <div class="tl-item"><div class="tl-year">0:00 · 10 min</div><p class="tl-text">Por qué todo el mundo empezó a hablar de Claude.</p></div>
+      <div class="tl-item"><div class="tl-year">0:10 · 8 min</div><p class="tl-text">Lo básico: abrir tu cuenta, qué ves en pantalla y dónde eliges modelo.</p></div>
+      <div class="tl-item"><div class="tl-year">0:18 · 17 min</div><p class="tl-text">Ejercicio 1. Que Claude te conozca.</p></div>
+      <div class="tl-item"><div class="tl-year">0:35 · 28 min</div><p class="tl-text">Ejercicio 2. Dale a Claude tu información real.</p></div>
+      <div class="tl-item"><div class="tl-year">1:03 · 21 min</div><p class="tl-text">Ejercicio 3. Que Claude deje algo hecho.</p></div>
+      <div class="tl-item"><div class="tl-year">1:24 · 6 min</div><p class="tl-text">Cierre y lo que sigue.</p></div>
+    </div>
+  </section>
+
+  <!-- 01 CONTEXTO -->
+  <section id="contexto">
+    <div class="eyebrow"><span class="num">01</span><h2>De dónde viene Claude</h2></div>
+    <div class="lead-block"><p>Antes de tocar nada, vale la pena entender contra quién compite Claude y por qué, en poco más de dos años, pasó de ser el desconocido a ser el que le quita terreno a ChatGPT en el mundo de negocios.</p></div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">Dic 2021</div>
+        <p class="tl-text">Dario y Daniela Amodei —hermanos, ambos ex-VPs de OpenAI— fundan Anthropic en San Francisco junto con otros investigadores que salieron de ahí por diferencias sobre qué tan rápido lanzar IA sin suficientes controles de seguridad.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">Nov 2022 → Mar 2023</div>
+        <p class="tl-text">ChatGPT sale al público y se vuelve el fenómeno de masas. Claude llega casi cinco meses después, sin el ruido mediático — como el "challenger" chico entrando a competir contra el que ya todos conocían.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2024</div>
+        <p class="tl-text">Anthropic apuesta por el lado empresarial en vez del consumo masivo: contratos por API, integración con AWS y Google Cloud, y el inicio de las capacidades agénticas.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2025</div>
+        <p class="tl-text">Lanza Claude Code. En pocos meses se vuelve una de las herramientas de programación con IA más adoptadas del mercado empresarial.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2026</div>
+        <p class="tl-text">Los ingresos anualizados de Anthropic rebasan a los de OpenAI por primera vez — construido casi todo sobre clientes de negocio, no usuarios individuales.</p>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <p class="chart-title">Ingresos anualizados (ARR) — Anthropic vs. OpenAI</p>
+      <p class="chart-sub">Cifras públicas aproximadas, en miles de millones de USD. El cruce ocurre a inicios de 2026.</p>
+      <svg viewBox="0 0 610 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfica de ingresos anualizados de Anthropic superando a OpenAI en 2026">
+        <line x1="50" y1="220" x2="580" y2="220" stroke="var(--line)" stroke-width="1"></line>
+        <path d="M50,215 L152,205 L254,187.5 L356,170 L458,160 L560,117" fill="none" stroke="#9C9AC0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M50,219 L152,217.5 L254,207.5 L356,185 L458,145 L560,35" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        <g fill="#9C9AC0"><circle cx="560" cy="117" r="4"></circle></g>
+        <g fill="#5B4FE8"><circle cx="560" cy="35" r="4"></circle></g>
+        <text x="565" y="120" font-family="Inter" font-size="12" fill="#767592">$41B</text>
+        <text x="565" y="39" font-family="Inter" font-size="12" font-weight="700" fill="#5B4FE8">$74B</text>
+        <text x="380" y="128" font-family="Inter" font-size="11" fill="#767592">Anthropic supera a OpenAI ~abr 2026</text>
+        <line x1="400" y1="132" x2="440" y2="155" stroke="#767592" stroke-width="1" stroke-dasharray="2,2"></line>
+        <g font-family="Inter" font-size="11" fill="#767592">
+          <text x="42" y="238">2023</text>
+          <text x="132" y="238">Dic 24</text>
+          <text x="236" y="238">Ago 25</text>
+          <text x="340" y="238">Feb 26</text>
+          <text x="442" y="238">Abr 26</text>
+          <text x="548" y="238">Jul 26</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span><i class="dot" style="background:#5B4FE8;"></i>Anthropic (Claude)</span>
+        <span><i class="dot" style="background:#9C9AC0;"></i>OpenAI (ChatGPT)</span>
+      </div>
+      <p class="chart-foot">Fuente: rondas de financiamiento y reportes públicos de ingresos anualizados de ambas compañías, 2023-2026. El mercado se mueve rápido — valida cifras exactas antes de citarlas como definitivas.</p>
+    </div>
+
+    <p style="margin-top:26px;font-size:15px;color:var(--ink-soft);"><b style="color:var(--ink);">Lo que hizo la diferencia no fueron los usuarios, fue el tipo de cliente.</b> Mientras ChatGPT creció explotando el consumo masivo, Anthropic construyó Claude para negocios — cerca del 80-85% de sus ingresos hoy vienen de empresas, no de suscripciones individuales.</p>
+
+    <p class="prompt-label" style="margin-top:30px;">Qué hace que Claude gane terreno</p>
+    <ul class="feature-list">
+      <li><span class="ficon">⚙️</span><div><h4>Lidera en código y trabajo agéntico</h4><p>Claude Code ya controla más de la mitad del mercado empresarial de programación con IA — más del doble que su competidor más cercano.</p></div></li>
+      <li><span class="ficon">🏢</span><div><h4>Construido para negocio, no para masas</h4><p>Mientras el otro vive del consumidor individual, Claude vive del cliente empresarial — eso cambia qué tan confiable y consistente tiene que ser.</p></div></li>
+      <li><span class="ficon">🔒</span><div><h4>La seguridad acorta el proceso de compra</h4><p>Su reputación de confiabilidad hace que a las empresas les tome menos tiempo aprobar su uso internamente.</p></div></li>
+      <li><span class="ficon">☁️</span><div><h4>Disponible en varias nubes</h4><p>Vive en AWS y en Google Cloud a la vez — ninguna empresa queda atada a un solo proveedor para usarlo.</p></div></li>
+      <li><span class="ficon">🤖</span><div><h4>Ejecuta, no solo contesta</h4><p>Cowork, los conectores y los artefactos convierten a Claude en algo que hace el trabajo, no solo lo describe — ese es el hilo de toda la sesión de hoy.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- 02 MAPA DE DECISIÓN -->
+  <section id="mapa">
+    <div class="eyebrow"><span class="num">02</span><h2>Mapa rápido de decisión</h2></div>
+    <div class="lead-block"><p>Con ese contexto ya tiene sentido esta tabla: no es una sola herramienta para todo, cada una resuelve algo distinto.</p></div>
+    <div class="table-scroll">
+    <table>
+      <thead><tr><th>Quiero...</th><th>Herramienta</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Resolver una duda personal o rápida, tipo búsqueda</td><td class="tool">ChatGPT / Gemini</td><td>Rapidez conversacional para lo cotidiano</td></tr>
+        <tr><td>Pensar, redactar, analizar o crear un archivo puntual (documento, tabla, gráfica, diagrama)</td><td class="tool">Claude (chat normal)</td><td>Ida y vuelta contigo, con herramientas para producir el entregable</td></tr>
+        <tr><td>Trabajar directamente sobre lo que estás viendo en una página web</td><td class="tool">Claude en Chrome</td><td>Actúa dentro del navegador, sin cambiar de ventana</td></tr>
+        <tr><td>Delegar una tarea completa de varios pasos y volver cuando esté lista</td><td class="tool">Claude Cowork</td><td>Trabaja de forma autónoma mientras haces otras cosas</td></tr>
+        <tr><td>Construir una herramienta o sistema real que otros van a usar</td><td class="tool">Lovable</td><td>Es una aplicación funcional, no una conversación</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- 03 AGÉNTICO -->
+  <section id="agentico">
+    <div class="eyebrow"><span class="num">03</span><h2>Lo que hizo ganar a Claude: lo agéntico (y qué más)</h2></div>
+    <div class="lead-block">
+      <p>Un chat responde cuando tú preguntas. Un agente recibe una tarea completa, decide los pasos, los ejecuta y regresa con el resultado — sin que estés dando clic en cada paso. Eso es lo agéntico, y es la razón número uno detrás de la curva de crecimiento que acabas de ver.</p>
+      <p>Pero no es lo único. Súmale: la reputación de confiabilidad que acelera la compra empresarial, estar disponible en la nube que cada empresa ya usa, y la ventaja en código — que hoy es la tarea más valiosa que cualquier negocio quiere automatizar.</p>
+      <div class="note">Si solo usas el chat de Claude, te estás perdiendo más del 80% del valor de la herramienta. Todo lo demás —Cowork, conectores, artefactos, skills— es donde vive el resto.</div>
+      <p>Eso es exactamente lo que van a ver en los siguientes tres ejercicios: cada uno le quita un paso manual a tu operación.</p>
+    </div>
+  </section>
+
+  <!-- 04 LO BÁSICO -->
+  <section id="basico">
+    <div class="eyebrow"><span class="num">04</span><h2>Manos a la obra: lo básico</h2></div>
+    <div class="lead-block"><p>Antes de los ejercicios, tres cosas rápidas para que todos arranquemos desde el mismo lugar. Voy a abrir una cuenta nueva y gratis en vivo, para que veas en mi pantalla lo mismo que tienes en la tuya.</p></div>
+
+    <p class="sub-h" style="margin-top:0;">1 · Abre tu cuenta</p>
+    <p class="sub-p">Si ya tienes Claude, salta al punto 2. Si no, se hace desde el navegador de tu computadora y no necesitas instalar nada.</p>
+    <ol class="flow">
+      <li><span class="arrow">1</span> <span>Entra a <a class="lnk" href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> desde el navegador de tu computadora.</span></li>
+      <li><span class="arrow">2</span> <span>Regístrate con <b>Continuar con Google</b> o con tu correo. Te pide confirmar con un código.</span></li>
+      <li><span class="arrow">3</span> <span>Si te ofrece un plan de paga, sáltalo. Hoy todo se puede hacer con la cuenta gratis.</span></li>
+      <li><span class="arrow">4</span> <span>Opcional, para después: la app de escritorio se baja en <a class="lnk" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a>. Funciona igual que la versión web.</span></li>
+    </ol>
+    <div class="note amber"><b style="color:var(--ink);">¿No pudiste entrar?</b> Avísame en el chat de Zoom y lo vemos. Mientras tanto, sigue el ejercicio en mi pantalla para no perder el hilo.</div>
+
+    <p class="sub-h">2 · Qué estás viendo</p>
+    <p class="sub-p">La pantalla tiene seis cosas que vas a usar hoy. Todo lo demás lo puedes ignorar por ahora.</p>
+
+    <div class="ui-mock" role="img" aria-label="Esquema de la pantalla de Claude con seis elementos numerados">
+      <div class="ui-side">
+        <div class="ui-item"><span class="n">1</span><span class="ui-btn ui-text">＋ Chat nuevo</span></div>
+        <div class="ui-item"><span class="n">2</span><span class="ui-text">Tus chats</span></div>
+        <div class="ui-item"><span class="ui-line"></span></div>
+        <div class="ui-item"><span class="ui-line" style="max-width:70%;"></span></div>
+        <div class="ui-spacer"></div>
+        <div class="ui-item"><span class="n">3</span><span class="ui-text">Tu perfil</span></div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-hello">¿En qué te ayudo hoy?</div>
+        <div class="ui-box">
+          <div class="ui-placeholder"><span class="n">5</span><span>Escríbele aquí…</span></div>
+          <div class="ui-row">
+            <span class="ui-item"><span class="n">4</span><span class="ui-chip">＋</span></span>
+            <span class="ui-item"><span class="n">6</span><span class="ui-chip">Modelo ▾</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="flow">
+      <li><span class="n">1</span> <span><b>Chat nuevo.</b> Cada conversación empieza en blanco. Hoy vas a abrir uno por ejercicio.</span></li>
+      <li><span class="n">2</span> <span><b>Tus chats.</b> Todo lo que platicas se queda guardado y puedes regresar a él.</span></li>
+      <li><span class="n">3</span> <span><b>Tu perfil.</b> Ahí están la configuración, los conectores y la memoria.</span></li>
+      <li><span class="n">4</span> <span><b>Botón +.</b> Para adjuntar fotos o archivos y para encender conectores.</span></li>
+      <li><span class="n">5</span> <span><b>Cuadro de texto.</b> Le escribes como le escribirías a una persona, con tus palabras.</span></li>
+      <li><span class="n">6</span> <span><b>Modelo.</b> Aquí eliges con qué versión de Claude trabajas y cuánto esfuerzo le pone.</span></li>
+    </ol>
+    <p style="font-size:13.5px;color:var(--gray);margin-top:10px;">Cuando Claude construye algo, se abre un panel a un lado con el resultado.</p>
+
+    <p class="sub-h">3 · Elige tu modelo y nivel de esfuerzo</p>
+    <p class="sub-p">Claude tiene varios modelos. Los más potentes piensan más, pero también gastan más rápido tu uso. Da clic en el <b>nombre del modelo</b> junto al cuadro de texto y déjalo así para toda la sesión:</p>
+    <div class="two-col">
+      <div class="card">
+        <p class="card-tag">Cuenta gratis</p>
+        <h4>Haiku · esfuerzo bajo</h4>
+        <p>Es el modelo más ligero y el que más te rinde. Si te aparece la opción <b>Esfuerzo</b>, ponla en bajo.</p>
+      </div>
+      <div class="card paid-card">
+        <p class="card-tag">Plan de paga</p>
+        <h4>Sonnet · esfuerzo como viene</h4>
+        <p>Te alcanza de sobra para todo lo de hoy, incluido el Nivel 3 de cada ejercicio.</p>
+      </div>
+    </div>
+
+    <div class="note"><b style="color:var(--ink);">Si tu cuenta es gratis, cuida tu uso.</b> El plan gratis tiene un tope que se reinicia cada 5 horas. Para que te alcance toda la sesión:
+      <ol class="flow" style="margin-top:6px;">
+        <li><span class="arrow">1</span> <span>Abre un chat nuevo para el Ejercicio 1 y otro para el 2. El 3 sigue en el mismo chat del 2.</span></li>
+        <li><span class="arrow">2</span> <span>Enciende solo el conector que estés usando en ese momento.</span></li>
+        <li><span class="arrow">3</span> <span>No le pidas que rehaga las cosas varias veces. Un ajuste y seguimos.</span></li>
+        <li><span class="arrow">4</span> <span>Si te sale el aviso de límite, sigue el ejercicio en mi pantalla. Los prompts se quedan en esta página para que lo termines después.</span></li>
+      </ol>
+    </div>
+
+    <p class="sub-h">4 · En qué nivel empiezas</p>
+    <p class="sub-p">Cada ejercicio tiene tres niveles. No miden qué tan bueno eres: dependen de cómo está tu Claude hoy. Lee los tres aunque hagas solo el primero, para que veas hasta dónde se puede llegar.</p>
+    <ul class="feature-list">
+      <li><span class="level-tag" style="align-self:flex-start;">Nivel 1</span><div><h4>Tu cuenta es nueva</h4><p>La abriste hoy o casi no la has usado. Claude todavía no sabe nada de ti.</p></div></li>
+      <li><span class="level-tag l2" style="align-self:flex-start;">Nivel 2</span><div><h4>Ya lo usabas</h4><p>Claude ya te conoce un poco, o ya terminaste el Nivel 1 y te sobró tiempo.</p></div></li>
+      <li><span class="level-tag l3" style="align-self:flex-start;">Nivel 3</span><div><h4>Tienes plan de paga o ya usas conectores</h4><p>Vas por la versión completa. Son los prompts que más uso consumen.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- EJERCICIOS -->
+  <section id="modulos" style="border-top:none;padding-top:12px;">
+    <div class="eyebrow"><span class="icon-eyebrow">🧩</span><h2 style="margin:0;">Los tres ejercicios de hoy</h2></div>
+    <p style="margin-top:-10px;">Cada uno arranca donde terminó el anterior. Mientras practicas, yo voy resolviendo dudas; al final de cada ejercicio le pido a dos o tres personas que enseñen lo que les salió.</p>
+
+    <!-- ejercicio 01 -->
+    <div class="module" id="m1">
+      <div class="module-head">
+        <h3>Ejercicio 01 · Que Claude te conozca</h3>
+        <span class="badge free">🆓 gratis · 17 min</span>
+      </div>
+      <p class="module-goal"><b>Objetivo:</b> que Claude sepa quién eres y qué haces, y que con eso te diga en qué te puede ayudar todos los días.</p>
+
+      <p style="font-size:15px;color:var(--ink-soft);">Claude contesta mejor mientras más sabe de ti. Una cuenta nueva no sabe nada: ni tu puesto, ni tu empresa, ni qué te quita tiempo. Este ejercicio arregla eso en cinco minutos y termina con una lista hecha para tu puesto, con los prompts listos para usarla mañana. Abre un <b>chat nuevo</b> y empieza por tu nivel.</p>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag">Nivel 1</span><h4>Tu cuenta es nueva: deja que te entreviste</h4></div>
+        <p class="level-desc">Pega el prompt y contesta cada pregunta con tus palabras, corto y sin pensarlo mucho. Al final te entrega tu lista.</p>
+        <p class="prompt-label">Prompt · entrevista y lista</p>
+        <div class="prompt">Quiero que me conozcas para que me ayudes mejor en mi trabajo. Hazme 3 preguntas, una por una: sobre mi puesto, lo que hago en un día normal y la tarea que más tiempo me quita. Cuando termine, resume quién soy en 3 líneas y hazme una lista de 10 cosas concretas en las que me puedes ayudar en mi día a día. Para cada una dame el prompt exacto que tendría que escribirte.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l2">Nivel 2</span><h4>Ya lo usabas: revisa qué sabe de ti</h4></div>
+        <p class="level-desc">Si ya llenaste tu memoria en la sesión pasada, comprueba que esté bien, completa lo que falte y pide tu lista.</p>
+        <p class="prompt-label">Prompt · qué sabe de ti y lista</p>
+        <div class="prompt">¿Qué sabes de mí y de mi trabajo? Dímelo en 5 líneas y pregúntame lo que te falte. Después hazme una lista de 10 cosas concretas en las que me puedes ayudar en mi día a día, que no sean las que ya te pido. Para cada una dame el prompt exacto que tendría que escribirte.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l3">Nivel 3</span><h4>Que te construya una herramienta</h4></div>
+        <p class="level-desc">Si tu Claude todavía no te conoce, haz primero el Nivel 1. Después manda este: en menos de un minuto se abre un panel a un lado con una herramienta funcionando. A eso se le llama <b>artefacto</b>.</p>
+        <p class="prompt-label">Prompt · tu herramienta</p>
+        <div class="prompt">Con lo que ya sabes de mí, constrúyeme una herramienta sencilla que pueda usar para la tarea que más tiempo me quita. En español y fácil de usar para alguien que no sabe de tecnología.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="level-desc">¿Te sobró tiempo? Déjala lista para que la use tu equipo:</p>
+        <p class="prompt-label">Prompt · versión para compartir</p>
+        <div class="prompt">Mejora esta herramienta para que la use todo mi equipo: agrega instrucciones de uso arriba, evita que se puedan capturar datos incorrectos y agrega un botón para copiar o exportar el resultado.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="level-desc" style="margin-bottom:10px;">Para compartirla: abre el artefacto, da clic en <b>Publicar</b> y copia el link. Quien lo abre no necesita cuenta.</p>
+
+        <details class="help">
+          <summary>¿No se te ocurre qué herramienta pedir? Usa una de estas</summary>
+          <p class="prompt-label">Prompt · Planta y producción</p>
+          <div class="prompt">Créame un checklist interactivo de arranque de turno para una línea de producción de empaques. Quiero poder marcar cada punto, ver el avance en porcentaje y al final tener un resumen para copiar y mandar por WhatsApp. Sencillo y en español.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+          <p class="prompt-label">Prompt · Almacén y logística</p>
+          <div class="prompt">Créame una calculadora interactiva de tarimas. Yo pongo cuántas cajas tengo, cuántas cajas caben por cama y cuántas camas lleva cada tarima, y me dice cuántas tarimas necesito y cuántas cajas sobran. Sencilla y en español.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+          <p class="prompt-label">Prompt · Ventas y atención a clientes</p>
+          <div class="prompt">Créame un cotizador interactivo sencillo. Yo capturo producto, cantidad, precio unitario y descuento, y me calcula subtotal, IVA (16%) y total, con un botón para copiar la cotización como texto. En español.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+          <p class="prompt-label">Prompt · Administración, compras y RH</p>
+          <div class="prompt">Créame un tablero interactivo de pendientes de la semana. Quiero agregar tareas, ponerles responsable y fecha límite, marcarlas como hechas y filtrar por responsable. Sencillo y en español.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        </details>
+      </div>
+
+      <div class="note">Conforme termines, pega en el chat de Zoom la idea de tu lista que más te sorprendió. Los del Nivel 3, una captura de su herramienta.</div>
+    </div>
+
+    <!-- ejercicio 02 -->
+    <div class="module" id="m2">
+      <div class="module-head">
+        <h3>Ejercicio 02 · Dale a Claude tu información real</h3>
+        <span class="badge free">🆓 gratis · 28 min</span>
+      </div>
+      <p class="module-goal"><b>Objetivo:</b> que Claude deje de estar aislado y se conecte a una herramienta real tuya, en vivo, delante de todos.</p>
+
+      <p style="font-size:15px;color:var(--ink-soft);">Hasta ahora, todo lo que Claude sabe es lo que tú le copias y pegas — cada conversación empieza otra vez de cero. Un conector cambia eso: Claude deja de depender de que tú le traigas la información, y va directo a la fuente. En vez de describirle el problema, le dices el resultado que quieres y él va por los datos solo. Esa es la diferencia entre <i>pedirle</i> algo y que <i>lo resuelva</i>.</p>
+
+      <div class="connector-directory">
+        <div class="cd-head">
+          <h5>Conectores principales</h5>
+          <a href="https://claude.ai/directory" target="_blank" rel="noopener">Explorar todos los conectores →</a>
+        </div>
+        <div class="cd-grid">
+          <div class="cd-card"><h6>Google Drive</h6><p>Busca, lee y sube archivos al instante</p></div>
+          <div class="cd-card"><h6>Gmail</h6><p>Redacta respuestas, resume hilos y busca en tu bandeja</p></div>
+          <div class="cd-card"><h6>Google Calendar</h6><p>Gestiona tu agenda y coordina reuniones</p></div>
+          <div class="cd-card"><h6>Canva</h6><p>Busca, crea y exporta diseños de Canva</p></div>
+          <div class="cd-card"><h6>Microsoft 365</h6><p>Accede a SharePoint, OneDrive, Outlook y Teams</p></div>
+          <div class="cd-card"><h6>Notion</h6><p>Conecta tu workspace para buscar y actualizar</p></div>
+          <div class="cd-card"><h6>Figma</h6><p>Genera diagramas y contexto desde tus diseños</p></div>
+          <div class="cd-card"><h6>Slack</h6><p>Manda mensajes y trae datos de tus canales</p></div>
+          <div class="cd-card"><h6>HubSpot</h6><p>Contexto de tu CRM en cada respuesta</p></div>
+          <div class="cd-card"><h6>Asana</h6><p>Coordina tareas, proyectos y objetivos</p></div>
+        </div>
+      </div>
+
+      <p class="prompt-label" style="margin-top:26px;">Cómo se conecta (igual para Gmail, Drive y Calendar)</p>
+      <ol class="flow">
+        <li><span class="arrow">1</span> <span>Abre un <b>chat nuevo</b>. Da clic en el botón <b>+</b> junto al cuadro de texto y entra a <b>Conectores</b>. También lo encuentras en tu <b>perfil → Configuración → Conectores</b>.</span></li>
+        <li><span class="arrow">2</span> <span>Elige el conector, da clic en <b>Conectar</b> e inicia sesión con tu cuenta de Google.</span></li>
+        <li><span class="arrow">3</span> <span>Cuando Claude te pida permiso para buscar en tu cuenta, da clic en <b>Permitir</b>.</span></li>
+      </ol>
+
+      <div class="note">A veces Claude entiende solo, por el contexto del chat, qué conector usar — no hace falta nombrarlo. Pero si tienen varios conectados o el prompt es ambiguo, conviene ser explícitos: o lo mencionan directo en el prompt ("busca en mi Gmail...") o lo seleccionan a mano con el botón <b>+</b> junto al cuadro de texto antes de escribir. Cuando algo no jale como esperan, esa suele ser la primera corrección.</div>
+      <div class="note amber"><b style="color:var(--ink);">Puedes usar tu Gmail de trabajo o el personal.</b> Si el de la empresa no te deja conectar, usa el personal. Nadie tiene que compartir pantalla con su correo abierto, y lo puedes desconectar al terminar desde el mismo menú.</div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag">Nivel 1</span><h4>Nunca has conectado nada: conecta tu correo</h4></div>
+        <p class="level-desc">Conecta <b>Gmail</b> y usa el prompt que corresponda a la cuenta que conectaste.</p>
+        <p class="prompt-label">Prompt · Gmail de trabajo</p>
+        <div class="prompt">Busca en mi correo los mensajes de clientes o proveedores de los últimos 7 días y dime cuáles llevan más de 2 días sin que yo responda. Máximo 5.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="prompt-label">Prompt · Gmail personal</p>
+        <div class="prompt">Revisa mis últimos 20 correos y dime qué tengo pendiente: pagos, citas, entregas o trámites. Ordénalo por fecha.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l2">Nivel 2</span><h4>Ya conectaste tu correo: suma tu Drive y crúzalos</h4></div>
+        <p class="level-desc">Mismo camino, ahora con <b>Google Drive</b>. Primero comprueba que lo lee:</p>
+        <p class="prompt-label">Prompt · Drive</p>
+        <div class="prompt">Busca en mi Drive el último archivo que edité esta semana y dime en dos líneas de qué se trata.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="level-desc">Los prompts anteriores son solo lectura — Claude va, busca y contesta. El siguiente paso es cruzar Gmail y Drive a la vez, para que te ayude a decidir en qué enfocarte, no solo a encontrar un dato.</p>
+        <p class="prompt-label">Prompt · cruzando Gmail y Drive</p>
+        <div class="prompt">De los últimos 7 días, basado en mi Drive y mi correo, dime los proyectos que más requieren de mi atención, en dónde estoy trabajando, y ayúdame a hacer un plan de acción para esta semana.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="level-desc">¿No usas Drive? Conecta <b>Google Calendar</b> y usa este:</p>
+        <p class="prompt-label">Prompt · Gmail y Calendar</p>
+        <div class="prompt">Revisa mi calendario de esta semana y mis correos de los últimos 7 días. Dime qué día lo tengo más cargado y qué pendientes debería resolver antes de cada reunión.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l3">Nivel 3</span><h4>Ya usas conectores: pide tu centro de mando</h4></div>
+        <p class="level-desc">Conecta Gmail, Drive y Calendar. En vez de preguntarle un dato, pídele que te construya un tablero con todo lo importante de tu trabajo en una sola vista. Es el prompt más pesado de la sesión: hazlo solo con plan de paga.</p>
+        <p class="prompt-label">Prompt · centro de mando</p>
+        <div class="prompt">Con mi correo, mi Drive y mi calendario de los últimos 7 días, constrúyeme un centro de mando visual de mi trabajo: lo urgente de hoy, mis reuniones de la semana, los correos que esperan respuesta mía y mis proyectos activos con el estado de cada uno. Que lo pueda entender de un vistazo.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+        <p class="level-desc">Es una foto del momento, no un tablero vivo: para actualizarlo se lo vuelves a pedir. En la siguiente sesión vemos cómo hacer que se actualice solo.</p>
+        <p class="level-desc">¿Te sobró tiempo? Úsalo para analizar cómo trabajas:</p>
+        <p class="prompt-label">Prompt · análisis de tu correo</p>
+        <div class="prompt">Analiza mi correo de los últimos 30 días. Dime a quién le respondo más lento, qué temas se repiten y qué 3 cosas podría delegar o convertir en plantilla.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <p style="font-size:13.5px;color:var(--gray);margin-top:14px;">Ese es el salto que quieres que vean: ya no es "encuéntrame un dato", es "júntame lo que vive en dos lugares distintos y dime en qué debería estar pensando esta semana".</p>
+    </div>
+
+    <!-- ejercicio 03 -->
+    <div class="module" id="m3">
+      <div class="module-head">
+        <h3>Ejercicio 03 · Que Claude deje algo hecho</h3>
+        <span class="badge free">🆓 gratis · 21 min</span>
+      </div>
+      <p class="module-goal"><b>Objetivo:</b> que Claude actúe con lo que encontró y deje trabajo terminado, esperando solo tu revisión.</p>
+
+      <p style="font-size:15px;color:var(--ink-soft);">En el ejercicio anterior Claude solo leyó. Ahora va a hacer algo con eso, fuera del chat: en tu correo, en tu Drive, en tu calendario. <b>Sigue en el mismo chat del Ejercicio 2</b>, para que use lo que ya encontró. Cada nivel es una acción distinta.</p>
+
+      <div class="note amber"><b style="color:var(--ink);">Regla de oro: Claude prepara, tú revisas, tú envías.</b> Antes de hacer cualquier cosa en tus cuentas te pide permiso, y en estos prompts le pedimos explícitamente que no envíe nada.</div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag">Nivel 1</span><h4>Un borrador esperándote en tu correo</h4></div>
+        <p class="level-desc">Claude redacta la respuesta y la deja guardada en Gmail. Al terminar, abre Gmail y busca en <b>Borradores</b>: ahí está.</p>
+        <p class="prompt-label">Prompt · borrador en Gmail</p>
+        <div class="prompt">Del pendiente más importante que encontraste, déjame un borrador de respuesta en mi Gmail. No lo envíes: solo guárdalo como borrador para que yo lo revise. Tono amable y directo.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l2">Nivel 2</span><h4>El resumen de tu semana, guardado en tu Drive</h4></div>
+        <p class="level-desc">Claude escribe el documento y lo deja en tu Drive, listo para abrir o compartir.</p>
+        <p class="prompt-label">Prompt · documento en Drive</p>
+        <div class="prompt">Con lo que encontraste en mi correo y mi Drive, ármame un resumen de una página de mi semana: qué avanzó, qué está detenido y qué necesito decidir. Guárdalo como documento en mi Drive.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <div class="level">
+        <div class="level-head"><span class="level-tag l3">Nivel 3</span><h4>Un pendiente resuelto de punta a punta</h4></div>
+        <p class="level-desc">Parte de tu centro de mando. Claude toma lo más urgente y lo deja atendido en dos lugares a la vez.</p>
+        <p class="prompt-label">Prompt · correo y calendario</p>
+        <div class="prompt">Toma el pendiente más urgente de mi centro de mando y déjalo resuelto: el borrador de respuesta en mi Gmail y un bloque de 30 minutos en mi calendario esta semana para atenderlo. No envíes nada ni invites a nadie.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+      </div>
+
+      <p style="font-size:13.5px;color:var(--gray);margin-top:14px;">Ese es el salto del día: primero Claude los conoció, luego leyó su información, y terminó dejando trabajo hecho esperando su revisión.</p>
+    </div>
+
+    <!-- extra -->
+    <div class="module" id="m4">
+      <div class="module-head">
+        <h3>Extra · Trae tu memoria de otra herramienta</h3>
+        <span class="badge free">🆓 opcional · para después de la sesión</span>
+      </div>
+      <p class="module-goal"><b>Objetivo:</b> si ya usabas ChatGPT o Gemini, traer todo ese contexto a Claude en vez de empezar de cero. Si nunca los usaste, te saltas este ejercicio.</p>
+
+      <ol class="flow">
+        <li><span class="arrow">1</span> <span>En Claude, entra a tu <b>perfil → Configuración → Memoria</b>.</span></li>
+        <li><span class="arrow">2</span> <span>Busca la opción para <b>importar memoria de otro proveedor de IA</b> y copia el prompt que te da.</span></li>
+        <li><span class="arrow">3</span> <span>Pega ese prompt en ChatGPT (o el asistente que hayas usado) y deja que genere el resumen.</span></li>
+        <li><span class="arrow">4</span> <span>Copia esa respuesta completa y pégala en el cuadro de importación de Claude.</span></li>
+        <li><span class="arrow">5</span> <span>Confírmalo preguntándole a Claude: "Actualicé mi memoria. ¿Qué aprendiste de mí?"</span></li>
+      </ol>
+
+      <p class="prompt-label">Prompt · pégalo en tu otra herramienta de IA</p>
+      <div class="prompt">Exporta toda la memoria y el contexto que hayas guardado sobre mí en conversaciones anteriores. Consérvalo lo más textual posible, sobre todo instrucciones y preferencias. Organízalo en: Instrucciones, Datos personales, Proyectos, Herramientas que uso, Preferencias — cada entrada en una línea, con fecha si la tienes. Devuélvemelo todo en un solo bloque de texto para copiar.<button class="copy" onclick="copyPrompt(this)">Copiar</button></div>
+
+      <div class="note">Toda la memoria que importen queda visible y editable — pueden revisarla y borrar lo que no quieran conservar antes de seguir.</div>
+    </div>
+
+  </section>
+
+  <!-- QUÉ SIGUE -->
+  <section id="sigue">
+    <div class="eyebrow"><span class="num">05</span><h2>Lo que sigue</h2></div>
+    <div class="lead-block"><p>Hoy Claude los conoció, leyó su información y dejó trabajo hecho. La próxima sesión le sueltan tareas completas.</p></div>
+    <ul class="feature-list">
+      <li><span class="ficon">🗂️</span><div><h4>Cowork: delegar una tarea de varios pasos</h4><p>Le das una carpeta desordenada y una instrucción, te alejas del teclado, y regresas cuando ya quedó.</p></div></li>
+      <li><span class="ficon">📊</span><div><h4>De Excel a dashboard</h4><p>Archivos sucios convertidos en un tablero visual, y después en recomendaciones de negocio basadas en tus números.</p></div></li>
+      <li><span class="ficon">🧠</span><div><h4>Skills</h4><p>Enseñarle a Claude una tarea una sola vez para que la repita igual cada vez que se la pidas.</p></div></li>
+    </ul>
+    <div class="note"><b style="color:var(--ink);">Tu tarea de esta semana:</b> mañana, antes de abrir tu correo, abre Claude y corre el prompt de tu nivel del Ejercicio 2. Empieza el día sabiendo en qué enfocarte.</div>
+  </section>
+
+  <footer>Escala con IA · Adding — sesión de Lilo Domit</footer>
+
+</div>
+
+<script>
+function toggleTheme(){
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-toggle');
+  if(html.getAttribute('data-theme') === 'dark'){
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙 Oscuro';
+  } else {
+    html.setAttribute('data-theme','dark');
+    btn.textContent = '☀️ Claro';
+  }
+}
+function copyPrompt(btn){
+  const clone = btn.parentElement.cloneNode(true);
+  clone.querySelectorAll('button').forEach(b => b.remove());
+  const text = clone.textContent.trim();
+  const original = 'Copiar';
+  function ok(){
+    btn.textContent = '¡Listo!';
+    setTimeout(()=>{btn.textContent = original;}, 1400);
+  }
+  function fail(){
+    btn.textContent = 'Selecciona y copia manual';
+    setTimeout(()=>{btn.textContent = original;}, 2200);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(ok).catch(()=>{ legacyCopy(text, ok, fail); });
+  } else {
+    legacyCopy(text, ok, fail);
+  }
+}
+function legacyCopy(text, ok, fail){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const success = document.execCommand('copy');
+    document.body.removeChild(ta);
+    success ? ok() : fail();
+  }catch(e){
+    fail();
+  }
+}
+</script>
+
+</body>
+</html>
